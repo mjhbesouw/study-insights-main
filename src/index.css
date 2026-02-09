@@ -1,0 +1,215 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Clinical Study Design System - Minimalist, Neutral, Accessible */
+
+@layer base {
+  :root {
+    /* Neutral, clinical color palette */
+    --background: 0 0% 99%;
+    --foreground: 220 13% 18%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 13% 18%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 13% 18%;
+
+    /* Subtle blue-gray for primary - clinical feel */
+    --primary: 215 25% 27%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Light neutral secondary */
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 13% 18%;
+
+    /* Muted grays */
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+
+    /* Subtle accent */
+    --accent: 215 20% 93%;
+    --accent-foreground: 215 25% 27%;
+
+    /* Error/warning states */
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Success state for confirmations */
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+
+    /* Warning for flags */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    /* Borders and inputs */
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 215 25% 27%;
+
+    --radius: 0.375rem;
+
+    /* Progress indicator */
+    --progress-track: 220 14% 93%;
+    --progress-fill: 215 25% 27%;
+
+    /* Sidebar - not used but keeping for shadcn compat */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 220 9% 46%;
+    --sidebar-primary: 215 25% 27%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 220 13% 18%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 215 25% 27%;
+  }
+
+  .dark {
+    --background: 220 13% 10%;
+    --foreground: 220 14% 96%;
+
+    --card: 220 13% 12%;
+    --card-foreground: 220 14% 96%;
+
+    --popover: 220 13% 12%;
+    --popover-foreground: 220 14% 96%;
+
+    --primary: 215 20% 65%;
+    --primary-foreground: 220 13% 10%;
+
+    --secondary: 220 13% 18%;
+    --secondary-foreground: 220 14% 96%;
+
+    --muted: 220 13% 18%;
+    --muted-foreground: 220 9% 60%;
+
+    --accent: 220 13% 18%;
+    --accent-foreground: 220 14% 96%;
+
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 60% 40%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 80% 45%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 220 13% 20%;
+    --input: 220 13% 20%;
+    --ring: 215 20% 65%;
+
+    --progress-track: 220 13% 18%;
+    --progress-fill: 215 20% 65%;
+
+    --sidebar-background: 220 13% 10%;
+    --sidebar-foreground: 220 14% 96%;
+    --sidebar-primary: 215 20% 65%;
+    --sidebar-primary-foreground: 220 13% 10%;
+    --sidebar-accent: 220 13% 18%;
+    --sidebar-accent-foreground: 220 14% 96%;
+    --sidebar-border: 220 13% 20%;
+    --sidebar-ring: 215 20% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Focus states for accessibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Container for main content */
+  .study-container {
+    @apply mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8;
+  }
+
+  /* Page header styling */
+  .study-header {
+    @apply mb-8 border-b border-border pb-6;
+  }
+
+  /* Section divider */
+  .study-divider {
+    @apply my-8 border-t border-border;
+  }
+
+  /* Privacy footer note */
+  .privacy-note {
+    @apply mt-8 border-t border-border pt-4 text-xs text-muted-foreground;
+  }
+
+  /* Question group styling */
+  .question-group {
+    @apply space-y-4 rounded-md border border-border bg-card p-4;
+  }
+
+  /* Conditional question indent */
+  .conditional-question {
+    @apply ml-4 border-l-2 border-accent pl-4;
+  }
+
+  /* Stepper track */
+  .stepper-track {
+    @apply flex items-center justify-between;
+  }
+
+  /* Stepper step */
+  .stepper-step {
+    @apply flex flex-col items-center;
+  }
+
+  .stepper-step-indicator {
+    @apply flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-colors;
+  }
+
+  .stepper-step-indicator--active {
+    @apply bg-primary text-primary-foreground;
+  }
+
+  .stepper-step-indicator--completed {
+    @apply bg-primary text-primary-foreground;
+  }
+
+  .stepper-step-indicator--pending {
+    @apply bg-muted text-muted-foreground;
+  }
+
+  .stepper-connector {
+    @apply h-0.5 flex-1 bg-border;
+  }
+
+  .stepper-connector--completed {
+    @apply bg-primary;
+  }
+}
