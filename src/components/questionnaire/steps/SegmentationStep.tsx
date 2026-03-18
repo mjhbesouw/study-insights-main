@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, CheckCircle2, LayoutGrid } from 'lucide-reac
 import QuestionGroup from '@/components/questionnaire/QuestionGroup';
 import { questionnaireConfig } from '@/config/questionnaireConfig';
 import { AnswerValue } from '@/types/questionnaire';
-import { isPatientComplete, testManualSupabaseSave, fetchAnswersFromSupabase } from '@/lib/dataLayer';
+import { isPatientComplete } from '@/lib/dataLayer';
 
 interface SegmentationStepProps {
   answers: Record<string, AnswerValue>;
@@ -207,6 +207,9 @@ const SegmentationStep = ({
   }
 
   // Detail Mode
+  const isLastSetInPatient = currentVariantIndex === currentPatient.variants.length - 1;
+  const isLastPatient = currentCaseIndex === totalPatients - 1;
+
   return (
     <div className="animate-in fade-in slide-in-from-right-4 duration-300">
       {/* Back to overview header */}
@@ -295,13 +298,15 @@ const SegmentationStep = ({
         </div>
 
         <Button
-          variant="default"
+          variant={isLastSetInPatient && !isLastPatient ? "secondary" : "default"}
           onClick={handleNext}
-          className="min-w-[120px]"
+          className={`min-w-[120px] ${isLastSetInPatient && !isLastPatient ? 'bg-blue-600/10 hover:bg-blue-600/20 text-blue-700 border-blue-200' : ''}`}
         >
-          {currentVariantIndex === currentPatient.variants.length - 1 && currentCaseIndex === totalPatients - 1
+          {isLastSetInPatient && isLastPatient
             ? 'Afronden'
-            : 'Volgende'}
+            : isLastSetInPatient
+              ? 'Volgende patiënt'
+              : 'Volgende set'}
           <ChevronRight className="h-4 w-4 ml-2" />
         </Button>
       </div>
