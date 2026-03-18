@@ -9,6 +9,7 @@ interface QuestionGroupProps {
   onAnswerChange: (questionId: string, value: AnswerValue) => void;
   onConditionalClear?: (questionId: string) => void;
   disabled?: boolean;
+  showErrors?: boolean;
 }
 
 const QuestionGroup = ({
@@ -17,6 +18,7 @@ const QuestionGroup = ({
   onAnswerChange,
   onConditionalClear,
   disabled = false,
+  showErrors = false,
 }: QuestionGroupProps) => {
   // Calculate visible questions
   const visibleQuestions = useMemo(() => {
@@ -55,16 +57,23 @@ const QuestionGroup = ({
 
   return (
     <div className="space-y-6">
-      {visibleQuestions.map((question) => (
-        <QuestionRenderer
-          key={question.id}
-          question={question}
-          value={answers[question.id]}
-          onChange={(value) => handleAnswerChange(question.id, value)}
-          isConditional={conditionalQuestionIds.has(question.id)}
-          disabled={disabled}
-        />
-      ))}
+      {visibleQuestions.map((question) => {
+        const value = answers[question.id];
+        const isMissing = !value?.value || (typeof value.value === 'string' && value.value.trim() === '');
+        const isError = showErrors && question.required && isMissing;
+
+        return (
+          <QuestionRenderer
+            key={question.id}
+            question={question}
+            value={value}
+            onChange={(newValue) => handleAnswerChange(question.id, newValue)}
+            isConditional={conditionalQuestionIds.has(question.id)}
+            disabled={disabled}
+            isError={isError}
+          />
+        );
+      })}
     </div>
   );
 };

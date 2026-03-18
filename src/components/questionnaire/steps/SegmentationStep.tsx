@@ -28,6 +28,7 @@ const SegmentationStep = ({
   disabled
 }: SegmentationStepProps) => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [showErrors, setShowErrors] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('overview');
   const [activeTab, setActiveTab] = useState<string>('A');
 
@@ -42,6 +43,7 @@ const SegmentationStep = ({
   useEffect(() => {
     if (viewMode === 'detail' && currentVariantIndex === -1) {
       setActiveTab(currentPatient.variants[0].variant_id);
+      setShowErrors(false);
     }
   }, [currentPatient, activeTab, viewMode, currentVariantIndex]);
 
@@ -61,6 +63,7 @@ const SegmentationStep = ({
 
   const handleChange = (questionId: string, value: AnswerValue) => {
     setErrorMsg(null);
+    setShowErrors(false);
     onAnswerChange(`segmentation.${activeVariant.case_id}.${questionId}`, value);
   };
 
@@ -81,6 +84,7 @@ const SegmentationStep = ({
       setActiveTab(patientSelected.variants[0].variant_id);
     }
 
+    setShowErrors(false);
     window.scrollTo(0, 0);
   };
 
@@ -88,6 +92,7 @@ const SegmentationStep = ({
     setErrorMsg(null);
     if (currentVariantIndex > 0) {
       setActiveTab(currentPatient.variants[currentVariantIndex - 1].variant_id);
+      setShowErrors(false);
       window.scrollTo(0, 0);
     } else if (currentCaseIndex > 0) {
       onCaseChange(currentCaseIndex - 1);
@@ -103,9 +108,11 @@ const SegmentationStep = ({
   const handleNext = () => {
     if (!isPatientComplete(activeVariant.case_id, answers)) {
       setErrorMsg("Niet alle verplichte vragen voor deze set zijn ingevuld.");
+      setShowErrors(true);
       return;
     }
     setErrorMsg(null);
+    setShowErrors(false);
 
     if (currentVariantIndex < currentPatient.variants.length - 1) {
       setActiveTab(currentPatient.variants[currentVariantIndex + 1].variant_id);
@@ -230,6 +237,7 @@ const SegmentationStep = ({
               key={v.variant_id}
               onClick={() => {
                 setErrorMsg(null);
+                setShowErrors(false);
                 setActiveTab(v.variant_id);
               }}
               className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-2 ${isActive
@@ -259,6 +267,7 @@ const SegmentationStep = ({
           onAnswerChange={handleChange}
           onConditionalClear={handleClear}
           disabled={disabled}
+          showErrors={showErrors}
         />
       </div>
 

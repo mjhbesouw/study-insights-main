@@ -22,6 +22,7 @@ interface QuestionRendererProps {
   onChange: (value: AnswerValue) => void;
   isConditional?: boolean;
   disabled?: boolean;
+  isError?: boolean;
 }
 
 const QuestionRenderer = ({
@@ -30,6 +31,7 @@ const QuestionRenderer = ({
   onChange,
   isConditional = false,
   disabled = false,
+  isError = false,
 }: QuestionRendererProps) => {
   const currentValue = value?.value ?? null;
   const currentComment = value?.comment ?? '';
@@ -85,7 +87,10 @@ const QuestionRenderer = ({
       case 'text':
         return (
           <div className="space-y-2">
-            <Label htmlFor={question.id} className="text-sm font-medium">
+            <Label
+              htmlFor={question.id}
+              className={cn("text-sm font-medium", isError && "text-destructive font-bold")}
+            >
               <span dangerouslySetInnerHTML={{ __html: question.label }} />
               {question.required && <span className="text-destructive ml-1">*</span>}
             </Label>
@@ -128,7 +133,10 @@ const QuestionRenderer = ({
       case 'dropdown':
         return (
           <div className="space-y-2">
-            <Label htmlFor={question.id} className="text-sm font-medium">
+            <Label
+              htmlFor={question.id}
+              className={cn("text-sm font-medium", isError && "text-destructive font-bold")}
+            >
               <span dangerouslySetInnerHTML={{ __html: question.label }} />
               {question.required && <span className="text-destructive ml-1">*</span>}
             </Label>
@@ -160,7 +168,7 @@ const QuestionRenderer = ({
       case 'choice':
         return (
           <div className="space-y-3">
-            <Label className="text-sm font-medium">
+            <Label className={cn("text-sm font-medium", isError && "text-destructive font-bold")}>
               <span dangerouslySetInnerHTML={{ __html: question.label }} />
               {question.required && <span className="text-destructive ml-1">*</span>}
             </Label>
@@ -191,7 +199,7 @@ const QuestionRenderer = ({
       case 'checkbox':
         return (
           <div className="space-y-3">
-            <Label className="text-sm font-medium">
+            <Label className={cn("text-sm font-medium", isError && "text-destructive font-bold")}>
               <span dangerouslySetInnerHTML={{ __html: question.label }} />
               {question.required && <span className="text-destructive ml-1">*</span>}
             </Label>
@@ -228,7 +236,10 @@ const QuestionRenderer = ({
         return (
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <Label htmlFor={question.id} className="text-sm font-medium">
+              <Label
+                htmlFor={question.id}
+                className={cn("text-sm font-medium", isError && "text-destructive font-bold")}
+              >
                 <span dangerouslySetInnerHTML={{ __html: question.label }} />
                 {question.required && <span className="text-destructive ml-1">*</span>}
               </Label>

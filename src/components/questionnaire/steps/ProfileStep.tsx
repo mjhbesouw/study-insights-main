@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import QuestionGroup from '@/components/questionnaire/QuestionGroup';
 import { questionnaireConfig } from '@/config/questionnaireConfig';
 import { AnswerValue } from '@/types/questionnaire';
 import { Button } from '@/components/ui/button';
+import { isProfileComplete } from '@/lib/dataLayer';
 
 interface ProfileStepProps {
   answers: Record<string, AnswerValue>;
@@ -12,6 +14,7 @@ interface ProfileStepProps {
 }
 
 const ProfileStep = ({ answers, onAnswerChange, onConditionalClear, onNext, disabled }: ProfileStepProps) => {
+  const [showErrors, setShowErrors] = useState(false);
   // Extract profile answers only
   const profileAnswers: Record<string, AnswerValue> = {};
   Object.entries(answers).forEach(([key, value]) => {
@@ -21,6 +24,7 @@ const ProfileStep = ({ answers, onAnswerChange, onConditionalClear, onNext, disa
   });
 
   const handleChange = (questionId: string, value: AnswerValue) => {
+    setShowErrors(false);
     onAnswerChange(`profile.${questionId}`, value);
   };
 
@@ -52,11 +56,20 @@ const ProfileStep = ({ answers, onAnswerChange, onConditionalClear, onNext, disa
           onAnswerChange={handleChange}
           onConditionalClear={handleClear}
           disabled={disabled}
+          showErrors={showErrors}
         />
       </div>
 
       <div className="flex justify-end mt-10">
-        <Button onClick={onNext} className="min-w-[140px]">
+        <Button
+          onClick={() => {
+            if (!isProfileComplete(answers)) {
+              setShowErrors(true);
+            }
+            onNext?.();
+          }}
+          className="min-w-[140px]"
+        >
           Start beoordeling
         </Button>
       </div>
