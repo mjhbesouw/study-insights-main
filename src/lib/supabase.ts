@@ -6,8 +6,6 @@ const supabaseAnonKeyRaw = import.meta.env.VITE_SUPABASE_ANON_KEY as string | un
 const SUPABASE_URL = (supabaseUrlRaw ?? "").trim();
 const SUPABASE_ANON_KEY = (supabaseAnonKeyRaw ?? "").trim();
 
-// Temporary debug, remove after confirming
-console.log("SUPABASE_URL resolved to:", SUPABASE_URL);
 
 if (!SUPABASE_URL || !SUPABASE_URL.startsWith("https://") || !SUPABASE_URL.includes(".supabase.co")) {
   throw new Error(
