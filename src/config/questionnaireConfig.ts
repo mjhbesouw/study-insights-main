@@ -17,9 +17,9 @@ export const questionnaireConfig: QuestionnaireConfig = {
       required: true,
       placeholder: 'Selecteer uw ervaring...',
       choices: [
-        { value: '0-2', label: '0–2 jaar' },
-        { value: '3-5', label: '3–5 jaar' },
-        { value: '6-10', label: '6–10 jaar' },
+        { value: '0-2', label: '0-2 jaar' },
+        { value: '3-5', label: '3-5 jaar' },
+        { value: '6-10', label: '6-10 jaar' },
         { value: '10+', label: 'Meer dan 10 jaar' },
       ],
     },
