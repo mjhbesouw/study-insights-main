@@ -98,7 +98,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
               ],
             },
             {
-              id: 'Q 01_A_6',
+              id: 'Q01_A_6',
               type: 'text',
               label: '<p>Wat is de belangrijkste reden dat CTVn_L3+L4_A&nbsp;onbruikbaar is?</p>',
               required: true,
