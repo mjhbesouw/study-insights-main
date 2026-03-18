@@ -1,17 +1,26 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-// Environment variables - replace these with your actual Supabase credentials
-// In production, use environment variables via import.meta.env
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://your-project.supabase.co';
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key';
+const supabaseUrlRaw = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const supabaseAnonKeyRaw = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 
-// Create Supabase client
+const SUPABASE_URL = (supabaseUrlRaw ?? "").trim();
+const SUPABASE_ANON_KEY = (supabaseAnonKeyRaw ?? "").trim();
+
+// Temporary debug, remove after confirming
+console.log("SUPABASE_URL resolved to:", SUPABASE_URL);
+
+if (!SUPABASE_URL || !SUPABASE_URL.startsWith("https://") || !SUPABASE_URL.includes(".supabase.co")) {
+  throw new Error(
+    "Supabase URL is missing or invalid. Check VITE_SUPABASE_URL in your .env or .env.local."
+  );
+}
+
+if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.length < 20) {
+  throw new Error(
+    "Supabase anon key is missing or invalid. Check VITE_SUPABASE_ANON_KEY in your .env or .env.local."
+  );
+}
+
 export const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Check if Supabase is properly configured
-export const isSupabaseConfigured = (): boolean => {
-  return (
-    SUPABASE_URL !== 'https://your-project.supabase.co' &&
-    SUPABASE_ANON_KEY !== 'your-anon-key'
-  );
-};
+export const isSupabaseConfigured = (): boolean => true;

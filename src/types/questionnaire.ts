@@ -5,13 +5,13 @@
 /**
  * Condition operators for conditional logic
  */
-export type ConditionOperator = 
-  | 'equals' 
-  | 'not_equals' 
-  | 'lt' 
-  | 'lte' 
-  | 'gt' 
-  | 'gte' 
+export type ConditionOperator =
+  | 'equals'
+  | 'not_equals'
+  | 'lt'
+  | 'lte'
+  | 'gt'
+  | 'gte'
   | 'includes';
 
 /**
@@ -27,13 +27,14 @@ export interface Condition {
 /**
  * Question types supported in the questionnaire
  */
-export type QuestionType = 
-  | 'likert' 
-  | 'choice' 
-  | 'text' 
-  | 'slider' 
-  | 'toggle' 
-  | 'dropdown';
+export type QuestionType =
+  | 'likert'
+  | 'choice'
+  | 'text'
+  | 'slider'
+  | 'toggle'
+  | 'dropdown'
+  | 'checkbox';
 
 /**
  * Likert scale configuration
@@ -74,15 +75,15 @@ export interface QuestionItem {
   label: string;
   description?: string;
   required?: boolean;
-  
+
   // Type-specific configs
   likert_config?: LikertConfig;
   choices?: ChoiceOption[];
   slider_config?: SliderConfig;
-  
+
   // Conditional display
   show_if?: Condition;
-  
+
   // Additional options
   allow_comment?: boolean;
   comment_label?: string;
@@ -90,13 +91,23 @@ export interface QuestionItem {
 }
 
 /**
- * Case configuration for segmentation ratings
+ * Config for a specific variant (e.g. A or B) of a patient case
  */
-export interface CaseConfig {
-  case_id: string;
+export interface CaseVariant {
+  variant_id: string; // 'A' or 'B'
+  case_id: string; // the database identifier, e.g. 'patient_01_a'
   display_name?: string;
   description?: string;
   questions: QuestionItem[];
+}
+
+/**
+ * Patient configuration grouping multiple variants
+ */
+export interface PatientConfig {
+  patient_id: string;
+  display_name?: string;
+  variants: CaseVariant[];
 }
 
 /**
@@ -125,19 +136,19 @@ export interface StepConfig {
  */
 export interface QuestionnaireConfig {
   version: string;
-  
+
   // Participant profile step
   profile_questions: QuestionItem[];
-  
-  // Segmentation rating cases (Step 2)
-  segmentation_cases: CaseConfig[];
-  
+
+  // Segmentation rating patients (Step 2)
+  segmentation_patients: PatientConfig[];
+
   // Turing test cases (Step 3)
   turing_cases: TuringTestCase[];
-  
+
   // Overall feedback questions (Step 4)
   feedback_questions: QuestionItem[];
-  
+
   // Step metadata
   steps: StepConfig[];
 }
@@ -150,7 +161,7 @@ export interface QuestionnaireConfig {
  * Single answer value
  */
 export interface AnswerValue {
-  value: string | number | boolean | null;
+  value: string | number | boolean | string[] | null;
   comment?: string;
   timestamp: string;
 }
@@ -180,7 +191,8 @@ export interface ParticipantSession {
   created_at: string;
   current_step: number;
   current_case_index: number;
-  consent_given: boolean;
+  consent_given: boolean; // Note: although we're removing the step, keeping the property for schema fallback
+  is_submitted: boolean;
 }
 
 export interface ConsentData {
@@ -201,7 +213,7 @@ export interface ConsentData {
 
 export interface QueuedAction {
   id: string;
-  action: 'upsert_answer' | 'save_consent' | 'submit_final';
+  action: 'upsert_answer' | 'hide_answer' | 'finalise_submission';
   payload: unknown;
   timestamp: string;
   retries: number;

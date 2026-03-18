@@ -1,6 +1,10 @@
 # Deep Learning Segmentation Study
 
-A minimalist, accessible questionnaire application for evaluating AI-generated radiotherapy segmentations.
+This repository contains the web-based questionnaire used in a multi-centre reader study evaluating deep learning segmentation (DLS) in radiotherapy.
+
+Radiation oncologists review segmentation results in RayStation and score the clinical usability of each structure through this questionnaire.
+
+The application is built with React and Supabase and is deployed via GitHub Pages.
 
 ## Features
 
@@ -8,7 +12,6 @@ A minimalist, accessible questionnaire application for evaluating AI-generated r
 - **Config-driven questions** - easily customize questions without changing UI code
 - **Conditional logic** - show/hide questions based on previous answers
 - **Offline support** - queues failed requests for retry
-- **PDF receipt generation** - download completion certificate
 - **Accessible design** - keyboard navigation, focus states, good contrast
 
 ## Setup
@@ -43,16 +46,6 @@ CREATE TABLE participants (
   familiarity INTEGER
 );
 
--- Consent table
-CREATE TABLE consent (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  participant_id TEXT REFERENCES participants(id),
-  consented_at TIMESTAMPTZ,
-  items_json JSONB,
-  name TEXT,
-  email TEXT,
-  center TEXT
-);
 
 -- Answers table
 CREATE TABLE answers (
@@ -78,7 +71,6 @@ CREATE TABLE submissions (
 
 -- Enable RLS (configure policies as needed)
 ALTER TABLE participants ENABLE ROW LEVEL SECURITY;
-ALTER TABLE consent ENABLE ROW LEVEL SECURITY;
 ALTER TABLE answers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE submissions ENABLE ROW LEVEL SECURITY;
 ```
@@ -100,8 +92,7 @@ npm run dev
 Edit `src/config/questionnaireConfig.ts` to customize:
 
 - **Profile questions** - participant demographics
-- **Segmentation cases** - up to 30 cases with up to 9 questions each
-- **Turing test cases** - comparison questions
+- **Segmentation cases** - multiple patient cases with clinical questions
 - **Feedback questions** - final feedback section
 
 ### Question types
@@ -155,7 +146,7 @@ Add `show_if` to any question:
 
 1. Go to your Supabase project
 2. Navigate to Table Editor
-3. Select the table (participants, consent, answers, submissions)
+3. Select the table (participants, answers, submissions)
 4. Click "Export" and choose CSV or JSON
 
 ### Via SQL
@@ -199,7 +190,6 @@ src/
 │       └── steps/
 │           ├── ProfileStep.tsx
 │           ├── SegmentationStep.tsx
-│           ├── TuringStep.tsx
 │           └── FeedbackStep.tsx
 ├── lib/
 │   ├── supabase.ts              # Supabase client
@@ -208,11 +198,13 @@ src/
 ├── types/
 │   └── questionnaire.ts         # TypeScript interfaces
 └── pages/
-    ├── Landing.tsx
-    ├── StudyInfo.tsx
-    ├── Consent.tsx
-    ├── Questionnaire.tsx
-    └── ThankYou.tsx
+    ├── Landing.tsx     # Landing page
+    ├── Access.tsx      # Secure access/login
+    ├── Welcome.tsx     # New user instructions
+    ├── WelcomeBack.tsx # Returning user landing
+    ├── Questionnaire.tsx # Main survey interface
+    ├── StudyInfo.tsx   # Detailed study information
+    └── ThankYou.tsx    # Completion page
 ```
 
 ## Privacy & Security
@@ -223,6 +215,16 @@ src/
 - All data is transmitted over HTTPS
 - Responses are stored in Supabase with RLS enabled
 
+## Citation
+
+If you use this questionnaire or parts of the code for research or derivative work, please cite the associated publication when available.
+
+Until the manuscript is published, please reference:
+
+Besouw M.  
+Deep Learning Segmentation Reader Study Questionnaire.  
+Radboud University Medical Center and Catharina Hospital Eindhoven, The Netherlands.
+
 ## Support
 
-For questions about the study, contact: [researcher@institution.edu]
+For questions about the study, contact: marlie.besouw@catharinaziekenhuis.nl 

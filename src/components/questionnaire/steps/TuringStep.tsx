@@ -122,7 +122,7 @@ const TuringStep = ({ answers, onAnswerChange }: TuringStepProps) => {
                     : 'bg-muted text-muted-foreground hover:bg-accent'
                 }
               `}
-              title={c.display_name || `Comparison ${index + 1}`}
+              title={c.display_name || `Vergelijking ${index + 1}`}
             >
               {index + 1}
             </button>
@@ -193,8 +193,8 @@ const TuringStep = ({ answers, onAnswerChange }: TuringStepProps) => {
             <div className="space-y-2">
               <Label htmlFor={`${currentCase.case_id}-reasoning`} className="text-sm font-medium">
                 {showReasoningForUnsure 
-                  ? 'Please explain why you are unsure'
-                  : 'Reasoning (optional)'
+                  ? 'Leg uit waarom u niet zeker bent'
+                  : 'Redenatie (optioneel)'
                 }
                 {showReasoningForUnsure && <span className="text-destructive ml-1">*</span>}
               </Label>
@@ -202,7 +202,7 @@ const TuringStep = ({ answers, onAnswerChange }: TuringStepProps) => {
                 id={`${currentCase.case_id}-reasoning`}
                 value={reasoningValue}
                 onChange={(e) => handleReasoningChange(e.target.value)}
-                placeholder="Explain your reasoning..."
+                placeholder="Leg uw redenatie uit..."
                 rows={3}
                 className="resize-none"
               />

@@ -1,165 +1,266 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Lock } from 'lucide-react';
 import Stepper from '@/components/questionnaire/Stepper';
 import ProfileStep from '@/components/questionnaire/steps/ProfileStep';
 import SegmentationStep from '@/components/questionnaire/steps/SegmentationStep';
-import TuringStep from '@/components/questionnaire/steps/TuringStep';
 import FeedbackStep from '@/components/questionnaire/steps/FeedbackStep';
 import { questionnaireConfig } from '@/config/questionnaireConfig';
-import { 
-  getOrCreateSession, 
-  updateSession, 
+import {
+  getOrCreateSession,
+  updateSession,
   getStoredAnswers,
   upsertAnswer,
-  deleteAnswer,
-  submitFinal,
-  createParticipantSession,
+  hideAnswer,
+  finaliseSubmission,
+  saveProfile,
+  isProfileComplete,
+  processOfflineQueue,
+  fetchSessionFromSupabase,
+  fetchAnswersFromSupabase,
+  saveSurveyProgress,
 } from '@/lib/dataLayer';
 import { AnswerValue } from '@/types/questionnaire';
-import { useDebounce } from '@/hooks/useDebounce';
 import { useToast } from '@/hooks/use-toast';
+import Footer from '@/components/Footer';
 
 const AUTOSAVE_DELAY = 1500; // 1.5 seconds
 
 const Questionnaire = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+
   const [currentStep, setCurrentStep] = useState(0);
+  const [currentCaseIndex, setCurrentCaseIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isReadOnly, setIsReadOnly] = useState(false);
+  const [isSaveExitDialogOpen, setIsSaveExitDialogOpen] = useState(false);
+
+  // Keep refs of latest state to avoid stale closures in our central save function
+  const latestAnswersRef = useRef(answers);
+  const latestStepRef = useRef(currentStep);
+  const latestCaseIndexRef = useRef(currentCaseIndex);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    latestAnswersRef.current = answers;
+    latestStepRef.current = currentStep;
+    latestCaseIndexRef.current = currentCaseIndex;
+  }, [answers, currentStep, currentCaseIndex]);
 
   // Load session and answers on mount
   useEffect(() => {
-    const session = getOrCreateSession();
-    
-    // Check if consent was given
-    if (!session.consent_given) {
-      navigate('/consent');
-      return;
+    async function initSession() {
+      const storedSessionId = localStorage.getItem('session_id');
+      if (storedSessionId) {
+        // Sync from Supabase first - Supabase wins
+        await fetchSessionFromSupabase(storedSessionId);
+        await fetchAnswersFromSupabase();
+      }
+
+      // getOrCreateSession now returns the synced meta
+      const session = getOrCreateSession();
+
+      if (session.is_submitted) {
+        setIsReadOnly(true);
+      }
+
+      const loadedAnswers = getStoredAnswers();
+      const hasAnswers = Object.keys(loadedAnswers).some(k => k.startsWith('segmentation.') || k.startsWith('profile.'));
+
+      // Resume step: if user has prior answers, go to their saved step (minimum step 1 to skip profile)
+      // For brand-new users with no answers, always start at step 0 (profile)
+      let startStep = 0;
+      if (hasAnswers && session.current_step > 0) {
+        startStep = session.current_step - 1; // Supabase stores 1-indexed
+      } else if (hasAnswers) {
+        // Has answers but no saved step — at least skip to segmentation
+        startStep = isProfileComplete(loadedAnswers) ? 1 : 0;
+      }
+      setCurrentStep(startStep);
+
+      // WelcomeBack resume hint
+      const resumeIndex = localStorage.getItem('resume_case_index');
+      if (resumeIndex !== null) {
+        const idx = parseInt(resumeIndex, 10);
+        setCurrentCaseIndex(idx);
+        updateSession({ current_case_index: idx }); // Sync back
+        localStorage.removeItem('resume_case_index');
+      } else {
+        setCurrentCaseIndex(session.current_case_index || 0);
+      }
+
+      setAnswers(loadedAnswers);
+      window.scrollTo(0, 0);
     }
 
-    setCurrentStep(session.current_step > 0 ? session.current_step - 1 : 0);
-    setAnswers(getStoredAnswers());
-  }, [navigate]);
+    initSession();
+  }, []);
 
-  // Autosave function
-  const performAutosave = useCallback(async (key: string, value: AnswerValue) => {
-    const parts = key.split('.');
-    let step: string;
-    let caseId: string | null = null;
-    let itemId: string;
-
-    if (parts.length === 3) {
-      [step, caseId, itemId] = parts;
-    } else {
-      [step, itemId] = parts;
-    }
+  // Central save function that pushes the whole state precisely once
+  const performSave = useCallback(async () => {
+    if (isReadOnly) return;
 
     setIsSaving(true);
     try {
-      await upsertAnswer(step, caseId, itemId, value);
-      setLastSaved(new Date().toISOString());
+      const sessionId = localStorage.getItem('session_id');
+      if (!sessionId) return;
+
+      const success = await saveSurveyProgress(
+        sessionId,
+        latestAnswersRef.current,
+        latestStepRef.current,
+        latestCaseIndexRef.current
+      );
+
+      if (success) {
+        setLastSaved(new Date().toISOString());
+      }
     } catch (error) {
-      console.error('Autosave failed:', error);
+      console.error('Save failed:', error);
     } finally {
       setIsSaving(false);
     }
-  }, []);
+  }, [isReadOnly]);
 
-  // Debounced autosave
-  const debouncedSave = useDebounce(performAutosave, AUTOSAVE_DELAY);
+  // Wrapper to trigger save explicitly and await it (e.g. for navigation)
+  const syncAndSave = async () => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    await performSave();
+  };
 
-  // Handle answer change
+  // Debounced wrapper that doesn't drop changes, it just delays the bulk save
+  const triggerAutosave = useCallback(() => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    saveTimeoutRef.current = setTimeout(() => {
+      performSave();
+    }, AUTOSAVE_DELAY);
+  }, [performSave]);
+
   const handleAnswerChange = useCallback((key: string, value: AnswerValue) => {
-    setAnswers(prev => {
-      const updated = { ...prev, [key]: value };
-      return updated;
-    });
-    debouncedSave(key, value);
-  }, [debouncedSave]);
+    if (isReadOnly) return;
+    setAnswers(prev => ({ ...prev, [key]: value }));
+    triggerAutosave();
+  }, [triggerAutosave, isReadOnly]);
 
-  // Handle conditional question clear
   const handleConditionalClear = useCallback(async (key: string) => {
+    if (isReadOnly) return;
+    // Visually delete it from UI
     setAnswers(prev => {
       const updated = { ...prev };
       delete updated[key];
       return updated;
     });
 
+    // We explicitly still call hideAnswer so it's handled in local storage, but 
+    // we DON'T trigger autosave here because we don't want to sync empty values to DB anymore.
     const parts = key.split('.');
-    let step: string;
-    let caseId: string | null = null;
-    let itemId: string;
+    let step = parts[0];
+    let caseId = parts.length === 3 ? parts[1] : null;
+    let itemId = parts.length === 3 ? parts[2] : parts[1];
+    await hideAnswer(step, caseId, itemId);
+  }, [isReadOnly]);
 
-    if (parts.length === 3) {
-      [step, caseId, itemId] = parts;
-    } else {
-      [step, itemId] = parts;
-    }
+  const handleCaseChange = async (index: number) => {
+    // 1. Flush any pending saves for the current case securely
+    await syncAndSave();
 
-    await deleteAnswer(step, caseId, itemId);
-  }, []);
+    // 2. Update state immediately for UI responsiveness
+    setCurrentCaseIndex(index);
+    updateSession({ current_case_index: index });
+    window.scrollTo(0, 0);
 
-  // Navigation
-  const handleNext = async () => {
-    // Flush any pending saves
-    debouncedSave.flush();
-
-    if (currentStep === 0) {
-      // Save profile to Supabase
-      const role = answers['profile.role']?.value as string || '';
-      const experience = answers['profile.experience']?.value as string || '';
-      const familiarity = answers['profile.familiarity']?.value as number || 0;
-      
-      const storedConsent = localStorage.getItem('dls_study_consent');
-      const consent = storedConsent ? JSON.parse(storedConsent) : {};
-      
-      await createParticipantSession(role, experience, familiarity, consent.center || '');
-    }
-
-    if (currentStep < questionnaireConfig.steps.length - 1) {
-      const nextStep = currentStep + 1;
-      setCurrentStep(nextStep);
-      updateSession({ current_step: nextStep + 1 });
-      window.scrollTo(0, 0);
+    // 3. Re-hydrate answers from Supabase to ensure "Source of Truth" persistence
+    const storedSessionId = localStorage.getItem('session_id');
+    if (storedSessionId) {
+      const latestAnswers = await fetchAnswersFromSupabase();
+      setAnswers(latestAnswers);
     }
   };
 
-  const handlePrevious = () => {
-    debouncedSave.flush();
-    if (currentStep > 0) {
-      const prevStep = currentStep - 1;
-      setCurrentStep(prevStep);
-      updateSession({ current_step: prevStep + 1 });
-      window.scrollTo(0, 0);
+  const handleStepClick = async (stepIndex: number) => {
+    if (stepIndex === currentStep) return;
+
+    // Validation: block going to segmentation if profile is not complete
+    if (stepIndex === 1 && !isProfileComplete(answers)) {
+      toast({
+        title: 'Profiel onvolledig',
+        description: 'Vul a.u.b. alle verplichte profielgegevens in voordat u verder gaat naar de scoring.',
+        variant: 'destructive',
+      });
+      return;
     }
+
+    // Validation for final step
+    if (stepIndex === 2) {
+      if (!isProfileComplete(answers)) {
+        toast({
+          title: 'Profiel onvolledig',
+          description: 'Vul a.u.b. alle verplichte profielgegevens in voordat u verder gaat naar de afronding.',
+          variant: 'destructive',
+        });
+        return;
+      }
+    }
+
+    await syncAndSave();
+
+    // If leaving profile, save it explicitly
+    if (currentStep === 0 && !isReadOnly) {
+      const experience = latestAnswersRef.current['profile.experience']?.value as string || '';
+      const aiExperience = latestAnswersRef.current['profile.ai_experience']?.value as string || '';
+      await saveProfile(experience, aiExperience);
+    }
+
+    setCurrentStep(stepIndex);
+    updateSession({ current_step: stepIndex + 1 });
+    window.scrollTo(0, 0);
   };
 
-  const handleSaveAndExit = () => {
-    debouncedSave.flush();
-    toast({
-      title: 'Progress saved',
-      description: 'You can return anytime to continue where you left off.',
-    });
+  const handleSaveAndExit = async () => {
+    // We DO NOT just open the dialog anymore, we actually save first
+    setIsSaving(true);
+    await syncAndSave();
+    setIsSaving(false);
+    setIsSaveExitDialogOpen(true);
+  };
+
+  const confirmSaveAndExit = async () => {
+    // Process queue before leaving if possible
+    await processOfflineQueue();
     navigate('/');
   };
 
   const handleSubmit = async () => {
-    debouncedSave.flush();
+    await syncAndSave();
     setIsSubmitting(true);
-
     try {
-      const completionCode = await submitFinal();
-      navigate('/thank-you', { state: { completionCode } });
-    } catch (error) {
+      // Ensure all pending changes are sent to server
+      await processOfflineQueue();
+
+      const success = await finaliseSubmission();
+      if (success) {
+        setIsReadOnly(true);
+        toast({
+          title: 'Inzending voltooid',
+          description: 'Uw antwoorden zijn definitief ingediend.',
+        });
+        navigate('/thank-you');
+      }
+    } catch (error: any) {
       console.error('Submission failed:', error);
       toast({
-        title: 'Submission failed',
-        description: 'Please try again. Your answers are saved.',
+        title: 'Inzending mislukt',
+        description: error.message === "already_submitted" ? 'Deze vragenlijst was al ingediend.' : 'Er is een fout opgetreden.',
         variant: 'destructive',
       });
     } finally {
@@ -167,7 +268,6 @@ const Questionnaire = () => {
     }
   };
 
-  // Render current step
   const renderStep = () => {
     switch (currentStep) {
       case 0:
@@ -176,6 +276,8 @@ const Questionnaire = () => {
             answers={answers}
             onAnswerChange={handleAnswerChange}
             onConditionalClear={handleConditionalClear}
+            onNext={() => handleStepClick(1)}
+            disabled={isReadOnly}
           />
         );
       case 1:
@@ -184,21 +286,21 @@ const Questionnaire = () => {
             answers={answers}
             onAnswerChange={handleAnswerChange}
             onConditionalClear={handleConditionalClear}
+            currentCaseIndex={currentCaseIndex}
+            onCaseChange={handleCaseChange}
+            onGoToFinal={() => handleStepClick(2)}
+            disabled={isReadOnly}
           />
         );
       case 2:
-        return (
-          <TuringStep
-            answers={answers}
-            onAnswerChange={handleAnswerChange}
-          />
-        );
-      case 3:
         return (
           <FeedbackStep
             answers={answers}
             onAnswerChange={handleAnswerChange}
             onConditionalClear={handleConditionalClear}
+            disabled={isReadOnly}
+            onSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
           />
         );
       default:
@@ -206,79 +308,71 @@ const Questionnaire = () => {
     }
   };
 
-  const isLastStep = currentStep === questionnaireConfig.steps.length - 1;
-
   return (
-    <div className="min-h-screen flex flex-col">
-      <main className="flex-1">
-        <div className="study-container">
-          {/* Stepper */}
-          <div className="mb-8">
+    <div className="min-h-screen flex flex-col bg-background">
+      <main className="flex-1 pb-20">
+        <div className="study-container py-8">
+          <header className="mb-10">
             <Stepper
               steps={questionnaireConfig.steps}
               currentStep={currentStep}
+              onStepClick={handleStepClick}
+              disabled={isReadOnly}
             />
-          </div>
+          </header>
 
-          {/* Autosave indicator */}
-          <div className="flex items-center justify-end mb-4 h-6">
-            {isSaving ? (
-              <span className="text-xs text-muted-foreground">Saving...</span>
-            ) : lastSaved ? (
-              <span className="text-xs text-muted-foreground">
-                Saved {new Date(lastSaved).toLocaleTimeString()}
-              </span>
-            ) : null}
-          </div>
+          {isReadOnly && (
+            <Alert className="mb-8 border-amber-200 bg-amber-50 text-amber-900 shadow-sm">
+              <Lock className="h-5 w-5 text-amber-600" />
+              <AlertDescription className="ml-2 font-semibold">
+                Deze vragenlijst is definitief ingediend. Wijzigingen zijn niet meer mogelijk.
+              </AlertDescription>
+            </Alert>
+          )}
 
-          {/* Step content */}
-          <div className="mb-8">
-            {renderStep()}
-          </div>
-
-          {/* Navigation */}
-          <div className="pt-8 border-t border-border">
-            <div className="flex flex-col sm:flex-row gap-4 justify-between">
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  onClick={handlePrevious}
-                  disabled={currentStep === 0}
-                >
-                  Previous
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  onClick={handleSaveAndExit}
-                >
-                  Save and exit
-                </Button>
-              </div>
-
-              {isLastStep ? (
-                <Button 
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Submitting...' : 'Submit questionnaire'}
-                </Button>
-              ) : (
-                <Button onClick={handleNext}>
-                  Next
+          <div className="flex items-center justify-between mb-6 h-6 px-1">
+            <div className="flex gap-4">
+              {!isReadOnly && (
+                <Button variant="ghost" size="sm" onClick={handleSaveAndExit} className="text-muted-foreground hover:text-foreground">
+                  Opslaan en afsluiten
                 </Button>
               )}
             </div>
+            {!isReadOnly && (
+              <div className="flex items-center gap-2">
+                {isSaving ? (
+                  <span className="text-xs text-muted-foreground animate-pulse">Synchroniseren...</span>
+                ) : lastSaved ? (
+                  <span className="text-xs text-muted-foreground opacity-60">
+                    Laatst bewaard: {new Date(lastSaved).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                ) : null}
+              </div>
+            )}
           </div>
 
-          {/* Privacy note */}
-          <div className="privacy-note">
-            <p>
-              No patient data is displayed in this questionnaire. All case identifiers are pseudonymous.
-              Your responses are stored securely and will be analyzed in anonymized form only.
-            </p>
+          <div className="bg-card border border-border rounded-xl shadow-sm p-6 sm:p-10">
+            {renderStep()}
           </div>
         </div>
       </main>
+
+      {/* Save & Exit Dialog */}
+      {isSaveExitDialogOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
+          <div className="bg-card border border-border p-6 rounded-xl shadow-lg max-w-xl w-full animate-in fade-in zoom-in duration-200">
+            <h3 className="text-lg font-semibold mb-2">Opslaan en afsluiten?</h3>
+            <p className="text-sm text-muted-foreground mb-6">
+              Nog niet klaar maar wil je later verdergaan? Je voortgang is opgeslagen.
+            </p>
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setIsSaveExitDialogOpen(false)}>Annuleren</Button>
+              <Button variant="default" onClick={confirmSaveAndExit}>Bevestigen en afsluiten</Button>
+            </div>
+          </div>
+        </div>
+      )}
+      <Footer />
     </div>
   );
 };

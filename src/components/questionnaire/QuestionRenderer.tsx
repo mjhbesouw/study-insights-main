@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
+import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
@@ -33,12 +34,27 @@ const QuestionRenderer = ({
   const currentValue = value?.value ?? null;
   const currentComment = value?.comment ?? '';
 
-  const handleValueChange = (newValue: string | number | boolean | null) => {
+  const handleValueChange = (newValue: string | number | boolean | string[] | null) => {
     onChange({
       value: newValue,
       comment: currentComment,
       timestamp: new Date().toISOString(),
     });
+  };
+
+  const handleCheckboxChange = (choiceValue: string, checked: boolean) => {
+    const currentArray = Array.isArray(currentValue) ? [...currentValue] : [];
+    if (checked) {
+      if (!currentArray.includes(choiceValue)) {
+        currentArray.push(choiceValue);
+      }
+    } else {
+      const index = currentArray.indexOf(choiceValue);
+      if (index > -1) {
+        currentArray.splice(index, 1);
+      }
+    }
+    handleValueChange(currentArray.length > 0 ? currentArray : null);
   };
 
   const handleCommentChange = (comment: string) => {
@@ -70,7 +86,7 @@ const QuestionRenderer = ({
         return (
           <div className="space-y-2">
             <Label htmlFor={question.id} className="text-sm font-medium">
-              {question.label}
+              <span dangerouslySetInnerHTML={{ __html: question.label }} />
               {question.required && <span className="text-destructive ml-1">*</span>}
             </Label>
             {question.description && (
@@ -93,7 +109,7 @@ const QuestionRenderer = ({
           <div className="flex items-center justify-between">
             <div>
               <Label htmlFor={question.id} className="text-sm font-medium">
-                {question.label}
+                <span dangerouslySetInnerHTML={{ __html: question.label }} />
                 {question.required && <span className="text-destructive ml-1">*</span>}
               </Label>
               {question.description && (
@@ -113,19 +129,22 @@ const QuestionRenderer = ({
         return (
           <div className="space-y-2">
             <Label htmlFor={question.id} className="text-sm font-medium">
-              {question.label}
+              <span dangerouslySetInnerHTML={{ __html: question.label }} />
               {question.required && <span className="text-destructive ml-1">*</span>}
             </Label>
             {question.description && (
               <p className="text-xs text-muted-foreground">{question.description}</p>
             )}
             <Select
-              value={(currentValue as string) || ''}
+              value={currentValue ? String(currentValue) : undefined}
               onValueChange={(v) => handleValueChange(v)}
               disabled={disabled}
             >
-              <SelectTrigger id={question.id}>
-                <SelectValue placeholder="Select an option" />
+              <SelectTrigger
+                id={question.id}
+                className={cn(!currentValue && "text-muted-foreground")}
+              >
+                <SelectValue placeholder={question.placeholder || "Selecteer een optie"} />
               </SelectTrigger>
               <SelectContent className="bg-popover">
                 {question.choices?.map((choice) => (
@@ -142,7 +161,7 @@ const QuestionRenderer = ({
         return (
           <div className="space-y-3">
             <Label className="text-sm font-medium">
-              {question.label}
+              <span dangerouslySetInnerHTML={{ __html: question.label }} />
               {question.required && <span className="text-destructive ml-1">*</span>}
             </Label>
             {question.description && (
@@ -157,7 +176,7 @@ const QuestionRenderer = ({
               {question.choices?.map((choice) => (
                 <div key={choice.value} className="flex items-center gap-2">
                   <RadioGroupItem value={choice.value} id={`${question.id}-${choice.value}`} />
-                  <Label 
+                  <Label
                     htmlFor={`${question.id}-${choice.value}`}
                     className="text-sm text-muted-foreground cursor-pointer"
                   >
@@ -169,6 +188,40 @@ const QuestionRenderer = ({
           </div>
         );
 
+      case 'checkbox':
+        return (
+          <div className="space-y-3">
+            <Label className="text-sm font-medium">
+              <span dangerouslySetInnerHTML={{ __html: question.label }} />
+              {question.required && <span className="text-destructive ml-1">*</span>}
+            </Label>
+            {question.description && (
+              <p className="text-xs text-muted-foreground">{question.description}</p>
+            )}
+            <div className="flex flex-col gap-2">
+              {question.choices?.map((choice) => {
+                const isChecked = Array.isArray(currentValue) && currentValue.includes(choice.value);
+                return (
+                  <div key={choice.value} className="flex items-center gap-2">
+                    <Checkbox
+                      id={`${question.id}-${choice.value}`}
+                      checked={isChecked}
+                      onCheckedChange={(checked) => handleCheckboxChange(choice.value, !!checked)}
+                      disabled={disabled}
+                    />
+                    <Label
+                      htmlFor={`${question.id}-${choice.value}`}
+                      className="text-sm text-muted-foreground cursor-pointer"
+                    >
+                      {choice.label}
+                    </Label>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+
       case 'slider':
         if (!question.slider_config) return null;
         const { min, max, step = 1, min_label, max_label } = question.slider_config;
@@ -176,7 +229,7 @@ const QuestionRenderer = ({
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <Label htmlFor={question.id} className="text-sm font-medium">
-                {question.label}
+                <span dangerouslySetInnerHTML={{ __html: question.label }} />
                 {question.required && <span className="text-destructive ml-1">*</span>}
               </Label>
               {currentValue !== null && (
@@ -213,7 +266,7 @@ const QuestionRenderer = ({
   return (
     <div className={cn(isConditional && 'conditional-question')}>
       {renderQuestion()}
-      
+
       {/* Optional comment field */}
       {question.allow_comment && (
         <div className="mt-3 space-y-2">
