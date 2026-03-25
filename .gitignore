@@ -34,4 +34,5 @@ dist-ssr
 testSupa.ts
 rls_policies.sql
 bun.lockb
+structs_website_subset.csv
 
