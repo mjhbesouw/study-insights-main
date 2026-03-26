@@ -1,4 +1,4 @@
-import { QuestionnaireConfig, PatientConfig, TuringTestCase } from '@/types/questionnaire';
+﻿import { QuestionnaireConfig, PatientConfig, TuringTestCase } from '@/types/questionnaire';
 
 export const questionnaireConfig: QuestionnaireConfig = {
   version: '1.0.0',
@@ -1505,7 +1505,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q05_B_7',
               type: 'choice',
-              label: '<p>CTVn_interpect_B</p>',
+              label: '<p>CTVn_interpect_L_B</p>',
               required: true,
               choices: [
                 { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
@@ -1516,7 +1516,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q05_B_8',
               type: 'text',
-              label: '<p>Wat is de belangrijkste reden dat CTVn_interpect_B onbruikbaar is?</p>',
+              label: '<p>Wat is de belangrijkste reden dat CTVn_interpect_L_B onbruikbaar is?</p>',
               required: true,
               placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
               show_if: { source_question_id: 'Q05_B_7', operator: 'equals', value: 'A003' },
@@ -1905,7 +1905,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q06_B_7',
               type: 'choice',
-              label: '<p>CTVn_interpect_B</p>',
+              label: '<p>CTVn_interpect_L_B</p>',
               required: true,
               choices: [
                 { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
@@ -1916,7 +1916,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q06_B_8',
               type: 'text',
-              label: '<p>Wat is de belangrijkste reden dat CTVn_interpect_B onbruikbaar is?</p>',
+              label: '<p>Wat is de belangrijkste reden dat CTVn_interpect_L_B onbruikbaar is?</p>',
               required: true,
               placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
               show_if: { source_question_id: 'Q06_B_7', operator: 'equals', value: 'A003' },
@@ -3639,7 +3639,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q11_B_5',
               type: 'choice',
-              label: '<p>CTVn_interpect_B</p>',
+              label: '<p>CTVn_interpect_L_B</p>',
               required: true,
               choices: [
                 { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
@@ -3650,7 +3650,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q11_B_6',
               type: 'text',
-              label: '<p>Wat is de belangrijkste reden dat CTVn_interpect_B onbruikbaar is?</p>',
+              label: '<p>Wat is de belangrijkste reden dat CTVn_interpect_L_B onbruikbaar is?</p>',
               required: true,
               placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
               show_if: { source_question_id: 'Q11_B_5', operator: 'equals', value: 'A003' },
@@ -4039,7 +4039,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q12_B_7',
               type: 'choice',
-              label: '<p>CTVn_interpect_B</p>',
+              label: '<p>CTVn_interpect_L_B</p>',
               required: true,
               choices: [
                 { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
@@ -4050,7 +4050,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q12_B_8',
               type: 'text',
-              label: '<p>Wat is de belangrijkste reden dat CTVn_interpect_B onbruikbaar is?</p>',
+              label: '<p>Wat is de belangrijkste reden dat CTVn_interpect_L_B onbruikbaar is?</p>',
               required: true,
               placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
               show_if: { source_question_id: 'Q12_B_7', operator: 'equals', value: 'A003' },
@@ -4458,7 +4458,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q13_B_7',
               type: 'choice',
-              label: '<p>CTVn_interpect_B</p>',
+              label: '<p>CTVn_interpect_L_B</p>',
               required: true,
               choices: [
                 { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
@@ -4469,7 +4469,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q13_B_8',
               type: 'text',
-              label: '<p>Wat is de belangrijkste reden dat CTVn_interpect_B onbruikbaar is?</p>',
+              label: '<p>Wat is de belangrijkste reden dat CTVn_interpect_L_B onbruikbaar is?</p>',
               required: true,
               placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
               show_if: { source_question_id: 'Q13_B_7', operator: 'equals', value: 'A003' },
@@ -5506,7 +5506,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q16_B_7',
               type: 'choice',
-              label: '<p>CTVn_interpect_B</p>',
+              label: '<p>CTVn_interpect_R_B</p>',
               required: true,
               choices: [
                 { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
@@ -5517,7 +5517,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q16_B_8',
               type: 'text',
-              label: '<p>Wat is de belangrijkste reden dat CTVn_interpect_B onbruikbaar is?</p>',
+              label: '<p>Wat is de belangrijkste reden dat CTVn_interpect_R_B onbruikbaar is?</p>',
               required: true,
               placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
               show_if: { source_question_id: 'Q16_B_7', operator: 'equals', value: 'A003' },
@@ -6421,7 +6421,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q19_B_7',
               type: 'choice',
-              label: '<p>CTVn_interpect_B</p>',
+              label: '<p>CTVn_interpect_L_B</p>',
               required: true,
               choices: [
                 { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
@@ -6432,7 +6432,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q19_B_8',
               type: 'text',
-              label: '<p>Wat is de belangrijkste reden dat CTVn_interpect_B onbruikbaar is?</p>',
+              label: '<p>Wat is de belangrijkste reden dat CTVn_interpect_L_B onbruikbaar is?</p>',
               required: true,
               placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
               show_if: { source_question_id: 'Q19_B_7', operator: 'equals', value: 'A003' },
