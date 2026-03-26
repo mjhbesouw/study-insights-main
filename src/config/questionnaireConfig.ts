@@ -1,4 +1,4 @@
-﻿import { QuestionnaireConfig, PatientConfig, TuringTestCase } from '@/types/questionnaire';
+import { QuestionnaireConfig, PatientConfig, TuringTestCase } from '@/types/questionnaire';
 
 export const questionnaireConfig: QuestionnaireConfig = {
   version: '1.0.0',
@@ -5404,7 +5404,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q16_A_9',
               type: 'choice',
-              label: '<p>Thyroid_A</p>',
+              label: '<p>Lungs_A</p>',
               required: true,
               choices: [
                 { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
@@ -5415,7 +5415,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q16_A_10',
               type: 'text',
-              label: '<p>Wat is de belangrijkste reden dat Thyroid_A onbruikbaar is?</p>',
+              label: '<p>Wat is de belangrijkste reden dat Lungs_A onbruikbaar is?</p>',
               required: true,
               placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
               show_if: { source_question_id: 'Q16_A_9', operator: 'equals', value: 'A003' },
@@ -5423,7 +5423,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q16_A_11',
               type: 'choice',
-              label: '<p>Oesophagus_A</p>',
+              label: '<p>Heart_A</p>',
               required: true,
               choices: [
                 { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
@@ -5434,10 +5434,67 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q16_A_12',
               type: 'text',
-              label: '<p>Wat is de belangrijkste reden dat Oesophagus_A onbruikbaar is?</p>',
+              label: '<p>Wat is de belangrijkste reden dat Heart_A onbruikbaar is?</p>',
               required: true,
               placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
               show_if: { source_question_id: 'Q16_A_11', operator: 'equals', value: 'A003' },
+            },
+            {
+              id: 'Q16_A_13',
+              type: 'choice',
+              label: '<p>Thyroid_A</p>',
+              required: true,
+              choices: [
+                { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
+                { value: 'A002', label: '2. Nog niet klinisch bruikbaar, enkele correcties nodig.' },
+                { value: 'A003', label: '3. Onbruikbaar: het is beter om opnieuw te starten.' },
+              ],
+            },
+            {
+              id: 'Q16_A_14',
+              type: 'text',
+              label: '<p>Wat is de belangrijkste reden dat Thyroid_A onbruikbaar is?</p>',
+              required: true,
+              placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
+              show_if: { source_question_id: 'Q16_A_13', operator: 'equals', value: 'A003' },
+            },
+            {
+              id: 'Q16_A_15',
+              type: 'choice',
+              label: '<p>Oesophagus_A</p>',
+              required: true,
+              choices: [
+                { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
+                { value: 'A002', label: '2. Nog niet klinisch bruikbaar, enkele correcties nodig.' },
+                { value: 'A003', label: '3. Onbruikbaar: het is beter om opnieuw te starten.' },
+              ],
+            },
+            {
+              id: 'Q16_A_16',
+              type: 'text',
+              label: '<p>Wat is de belangrijkste reden dat Oesophagus_A onbruikbaar is?</p>',
+              required: true,
+              placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
+              show_if: { source_question_id: 'Q16_A_15', operator: 'equals', value: 'A003' },
+            },
+            {
+              id: 'Q16_A_17',
+              type: 'choice',
+              label: '<p>Humerus_R_A</p>',
+              required: true,
+              choices: [
+                { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
+                { value: 'A002', label: '2. Nog niet klinisch bruikbaar, enkele correcties nodig.' },
+                { value: 'A003', label: '3. Onbruikbaar: het is beter om opnieuw te starten.' },
+              ],
+            },
+            {
+              id: 'Q16_A_18',
+              type: 'text',
+              label: '<p>Wat is de belangrijkste reden dat Humerus_R_A onbruikbaar is?</p>',
+              required: true,
+              placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
+              show_if: { source_question_id: 'Q16_A_17', operator: 'equals', value: 'A003' },
             },
           ],
         },
@@ -5525,7 +5582,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q16_B_9',
               type: 'choice',
-              label: '<p>Thyroid_B</p>',
+              label: '<p>Lungs_B</p>',
               required: true,
               choices: [
                 { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
@@ -5536,7 +5593,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q16_B_10',
               type: 'text',
-              label: '<p>Wat is de belangrijkste reden dat Thyroid_B onbruikbaar is?</p>',
+              label: '<p>Wat is de belangrijkste reden dat Lungs_B onbruikbaar is?</p>',
               required: true,
               placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
               show_if: { source_question_id: 'Q16_B_9', operator: 'equals', value: 'A003' },
@@ -5544,7 +5601,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q16_B_11',
               type: 'choice',
-              label: '<p>Oesophagus_B</p>',
+              label: '<p>Heart_B</p>',
               required: true,
               choices: [
                 { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
@@ -5555,10 +5612,67 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q16_B_12',
               type: 'text',
-              label: '<p>Wat is de belangrijkste reden dat Oesophagus_B onbruikbaar is?</p>',
+              label: '<p>Wat is de belangrijkste reden dat Heart_B onbruikbaar is?</p>',
               required: true,
               placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
               show_if: { source_question_id: 'Q16_B_11', operator: 'equals', value: 'A003' },
+            },
+            {
+              id: 'Q16_B_13',
+              type: 'choice',
+              label: '<p>Thyroid_B</p>',
+              required: true,
+              choices: [
+                { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
+                { value: 'A002', label: '2. Nog niet klinisch bruikbaar, enkele correcties nodig.' },
+                { value: 'A003', label: '3. Onbruikbaar: het is beter om opnieuw te starten.' },
+              ],
+            },
+            {
+              id: 'Q16_B_14',
+              type: 'text',
+              label: '<p>Wat is de belangrijkste reden dat Thyroid_B onbruikbaar is?</p>',
+              required: true,
+              placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
+              show_if: { source_question_id: 'Q16_B_13', operator: 'equals', value: 'A003' },
+            },
+            {
+              id: 'Q16_B_15',
+              type: 'choice',
+              label: '<p>Oesophagus_B</p>',
+              required: true,
+              choices: [
+                { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
+                { value: 'A002', label: '2. Nog niet klinisch bruikbaar, enkele correcties nodig.' },
+                { value: 'A003', label: '3. Onbruikbaar: het is beter om opnieuw te starten.' },
+              ],
+            },
+            {
+              id: 'Q16_B_16',
+              type: 'text',
+              label: '<p>Wat is de belangrijkste reden dat Oesophagus_B onbruikbaar is?</p>',
+              required: true,
+              placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
+              show_if: { source_question_id: 'Q16_B_15', operator: 'equals', value: 'A003' },
+            },
+            {
+              id: 'Q16_B_17',
+              type: 'choice',
+              label: '<p>Humerus_R_B</p>',
+              required: true,
+              choices: [
+                { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
+                { value: 'A002', label: '2. Nog niet klinisch bruikbaar, enkele correcties nodig.' },
+                { value: 'A003', label: '3. Onbruikbaar: het is beter om opnieuw te starten.' },
+              ],
+            },
+            {
+              id: 'Q16_B_18',
+              type: 'text',
+              label: '<p>Wat is de belangrijkste reden dat Humerus_R_B onbruikbaar is?</p>',
+              required: true,
+              placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
+              show_if: { source_question_id: 'Q16_B_17', operator: 'equals', value: 'A003' },
             },
           ],
         },
@@ -6033,7 +6147,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q18_A_7',
               type: 'choice',
-              label: '<p>Thyroid_A</p>',
+              label: '<p>Lungs_A</p>',
               required: true,
               choices: [
                 { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
@@ -6044,10 +6158,48 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q18_A_8',
               type: 'text',
-              label: '<p>Wat is de belangrijkste reden dat Thyroid_A onbruikbaar is?</p>',
+              label: '<p>Wat is de belangrijkste reden dat Lungs_A onbruikbaar is?</p>',
               required: true,
               placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
               show_if: { source_question_id: 'Q18_A_7', operator: 'equals', value: 'A003' },
+            },
+            {
+              id: 'Q18_A_9',
+              type: 'choice',
+              label: '<p>Heart_A</p>',
+              required: true,
+              choices: [
+                { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
+                { value: 'A002', label: '2. Nog niet klinisch bruikbaar, enkele correcties nodig.' },
+                { value: 'A003', label: '3. Onbruikbaar: het is beter om opnieuw te starten.' },
+              ],
+            },
+            {
+              id: 'Q18_A_10',
+              type: 'text',
+              label: '<p>Wat is de belangrijkste reden dat Heart_A onbruikbaar is?</p>',
+              required: true,
+              placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
+              show_if: { source_question_id: 'Q18_A_9', operator: 'equals', value: 'A003' },
+            },
+            {
+              id: 'Q18_A_11',
+              type: 'choice',
+              label: '<p>Thyroid_A</p>',
+              required: true,
+              choices: [
+                { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
+                { value: 'A002', label: '2. Nog niet klinisch bruikbaar, enkele correcties nodig.' },
+                { value: 'A003', label: '3. Onbruikbaar: het is beter om opnieuw te starten.' },
+              ],
+            },
+            {
+              id: 'Q18_A_12',
+              type: 'text',
+              label: '<p>Wat is de belangrijkste reden dat Thyroid_A onbruikbaar is?</p>',
+              required: true,
+              placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
+              show_if: { source_question_id: 'Q18_A_11', operator: 'equals', value: 'A003' },
             },
           ],
         },
@@ -6116,7 +6268,7 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q18_B_7',
               type: 'choice',
-              label: '<p>Thyroid_B</p>',
+              label: '<p>Lungs_B</p>',
               required: true,
               choices: [
                 { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
@@ -6127,10 +6279,48 @@ export const questionnaireConfig: QuestionnaireConfig = {
             {
               id: 'Q18_B_8',
               type: 'text',
-              label: '<p>Wat is de belangrijkste reden dat Thyroid_B onbruikbaar is?</p>',
+              label: '<p>Wat is de belangrijkste reden dat Lungs_B onbruikbaar is?</p>',
               required: true,
               placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
               show_if: { source_question_id: 'Q18_B_7', operator: 'equals', value: 'A003' },
+            },
+            {
+              id: 'Q18_B_9',
+              type: 'choice',
+              label: '<p>Heart_B</p>',
+              required: true,
+              choices: [
+                { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
+                { value: 'A002', label: '2. Nog niet klinisch bruikbaar, enkele correcties nodig.' },
+                { value: 'A003', label: '3. Onbruikbaar: het is beter om opnieuw te starten.' },
+              ],
+            },
+            {
+              id: 'Q18_B_10',
+              type: 'text',
+              label: '<p>Wat is de belangrijkste reden dat Heart_B onbruikbaar is?</p>',
+              required: true,
+              placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
+              show_if: { source_question_id: 'Q18_B_9', operator: 'equals', value: 'A003' },
+            },
+            {
+              id: 'Q18_B_11',
+              type: 'choice',
+              label: '<p>Thyroid_B</p>',
+              required: true,
+              choices: [
+                { value: 'A001', label: '1. Klinisch bruikbaar: geen correcties nodig.' },
+                { value: 'A002', label: '2. Nog niet klinisch bruikbaar, enkele correcties nodig.' },
+                { value: 'A003', label: '3. Onbruikbaar: het is beter om opnieuw te starten.' },
+              ],
+            },
+            {
+              id: 'Q18_B_12',
+              type: 'text',
+              label: '<p>Wat is de belangrijkste reden dat Thyroid_B onbruikbaar is?</p>',
+              required: true,
+              placeholder: 'Beschrijf de reden... Bijvoorbeeld: Craniaal te groot, te dicht bij het doelgebied, mediaal te klein, etc.',
+              show_if: { source_question_id: 'Q18_B_11', operator: 'equals', value: 'A003' },
             },
           ],
         },
