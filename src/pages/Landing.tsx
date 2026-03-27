@@ -83,7 +83,7 @@ const Landing = () => {
             </div>
 
             {/* Right side: Practical Info & CTA */}
-            <div className="lg:col-span-5 space-y-8 lg:sticky lg:top-12">
+            <div className="lg:col-span-5 space-y-8">
               <div className="bg-white rounded-3xl border border-[#e2e8f0] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 space-y-6">
                 <div className="flex items-center gap-4 mb-2">
                   <div className="p-3 bg-[#f0f9ff] rounded-2xl">
