@@ -14,12 +14,12 @@ const Landing = () => {
           {/* Hero Section */}
           <div className="text-center space-y-8">
             <h1 className="text-4xl sm:text-6xl font-extrabold text-[#0f172a] tracking-tight leading-tight">
-              Multicenter DLS Studie: <span className="text-primary italic">RS gebruikersgroep</span>
+              Multicenter DLS Studie: <br /><span className="text-primary italic">RS gebruikersgroep</span>
             </h1>
             <p className="text-xl text-[#475569] max-w-3xl mx-auto leading-relaxed font-medium">
-              Deep Learning Segmentatie (DLS) software toont veelbelovende resultaten bij het
-              automatiseren van de afbakening van risico-organen en doelvolumes in de
-              radiotherapieplanning.
+              In deze reader study vragen we jullie als radiotherapeuten om segmentaties kwalitatief te beoordelen.
+              Hierbij worden zowel AI-gegenereerde segmentaties als klinische segmentaties van verschillende
+              instituten getoond.
             </p>
           </div>
 
@@ -27,14 +27,14 @@ const Landing = () => {
             {/* Left side: Context & Phasing */}
             <div className="lg:col-span-7 space-y-10">
               <div className="bg-white rounded-3xl border border-[#e2e8f0] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-10 space-y-8 relative overflow-hidden">
-                 <div className="absolute top-0 left-0 w-2 h-full bg-primary/20"></div>
-                
+                <div className="absolute top-0 left-0 w-2 h-full bg-primary/20"></div>
+
                 <div className="space-y-6 text-left">
                   <p className="text-[#334155] text-lg leading-relaxed">
                     In het kwantitatieve deel van deze studie hebben we multicenter klinische segmentaties
                     gebruikt als referentiestandaard.
                   </p>
-                  
+
                   <div className="pt-8 border-t border-[#f1f5f9]">
                     <h2 className="text-xl font-bold text-[#0f172a] mb-8 flex items-center gap-3">
                       <div className="p-2 bg-primary/10 rounded-lg">
@@ -42,7 +42,7 @@ const Landing = () => {
                       </div>
                       Deze reader study bestaat uit drie onderdelen:
                     </h2>
-                    
+
                     <div className="space-y-8 relative">
                       {/* Timeline line */}
                       <div className="absolute left-[19px] top-10 bottom-10 w-0.5 bg-[#f1f5f9]"></div>
@@ -80,28 +80,13 @@ const Landing = () => {
                   </div>
                 </div>
               </div>
-
-              <div className="text-left space-y-6 px-4">
-                <p className="text-[#64748b] leading-relaxed text-lg">
-                  In deze reader study vragen we radiotherapeuten om segmentaties kwalitatief te beoordelen.
-                  Hierbij worden zowel AI-gegenereerde segmentaties als klinische segmentaties van verschillende
-                  instituten getoond.
-                </p>
-                <div className="flex items-start gap-4 p-4 bg-[#f8fafc] rounded-2xl border border-[#f1f5f9]">
-                  <Info className="w-6 h-6 text-primary/60 flex-none mt-1" />
-                  <p className="text-[#64748b] leading-relaxed italic text-base">
-                    Uw beoordeling helpt om de resultaten van de kwantitatieve analyse beter
-                    te interpreteren en inzicht te krijgen in de variatie tussen klinische segmentaties.
-                  </p>
-                </div>
-              </div>
             </div>
 
             {/* Right side: Practical Info & CTA */}
             <div className="lg:col-span-5 space-y-8 lg:sticky lg:top-12">
               <div className="bg-white rounded-3xl border border-[#e2e8f0] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 space-y-6">
                 <div className="flex items-center gap-4 mb-2">
-                   <div className="p-3 bg-[#f0f9ff] rounded-2xl">
+                  <div className="p-3 bg-[#f0f9ff] rounded-2xl">
                     <Monitor className="w-6 h-6 text-[#0369a1]" />
                   </div>
                   <h3 className="text-xl font-bold text-[#0f172a]">RayStation</h3>
@@ -114,14 +99,14 @@ const Landing = () => {
 
               <div className="bg-[#0f172a] text-white rounded-[2rem] p-10 space-y-8 shadow-2xl shadow-primary/20 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-primary/20 transition-colors"></div>
-                
+
                 <div className="space-y-4 relative">
                   <h3 className="text-3xl font-bold tracking-tight">Klaar om te starten?</h3>
                   <p className="text-[#94a3b8] text-lg font-medium leading-relaxed">
                     U kunt de vragenlijst tussendoor opslaan en later verdergaan op hetzelfde punt.
                   </p>
                 </div>
-                
+
                 <Button
                   size="lg"
                   onClick={() => navigate('/access')}
