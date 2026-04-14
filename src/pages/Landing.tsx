@@ -92,7 +92,7 @@ const Landing = () => {
                   <h3 className="text-xl font-bold text-[#0f172a]">RayStation</h3>
                 </div>
                 <p className="text-[#475569] leading-relaxed font-medium">
-                  De patiënten in deze studie zijn beschikbaar als <span className="text-[#0369a1] font-bold">patient_01 t/m patient_21</span>. Wanneer deze
+                  De patiënten in deze studie zijn beschikbaar als <span className="text-[#0369a1] font-bold">patient_01 t/m patient_22</span>. Wanneer deze
                   al door de klinisch fysicus zijn ingeladen, kunt u deze direct terugvinden in RayStation.
                 </p>
               </div>
