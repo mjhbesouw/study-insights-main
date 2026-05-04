@@ -1,5 +1,7 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabase";
 import {
     getOrCreateSession,
     getStoredAnswers,
@@ -15,6 +17,31 @@ const WelcomeBack = () => {
     const navigate = useNavigate();
     const session = getOrCreateSession();
     const answers = getStoredAnswers();
+    const [isScoringSubmitted, setIsScoringSubmitted] = useState(false);
+    const [isChecking, setIsChecking] = useState(true);
+
+    useEffect(() => {
+        async function checkSubmission() {
+            const participantId = localStorage.getItem("participant_id");
+            if (!participantId) {
+                setIsChecking(false);
+                return;
+            }
+
+            const { data, error } = await supabase
+                .from("submissions")
+                .select("id")
+                .eq("participant_id", participantId)
+                .maybeSingle();
+
+            if (data && !error) {
+                setIsScoringSubmitted(true);
+            }
+            setIsChecking(false);
+        }
+
+        checkSubmission();
+    }, []);
 
     const handleContinue = () => {
         // Determine where to send the user
@@ -52,7 +79,7 @@ const WelcomeBack = () => {
     return (
         <div className="min-h-screen flex flex-col bg-background">
             <main className="flex-1 flex items-center justify-center p-4">
-                <div className="max-w-md w-full bg-card border border-border p-10 rounded-2xl shadow-xl text-center animate-in fade-in zoom-in duration-500">
+                <div className="max-w-lg w-full bg-card border border-border p-8 sm:p-10 rounded-2xl shadow-xl text-center animate-in fade-in zoom-in duration-500">
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                         <LogIn className="w-8 h-8 text-primary" />
                     </div>
@@ -62,14 +89,65 @@ const WelcomeBack = () => {
                         U kunt verdergaan waar u bent gebleven. Uw voortgang is veilig opgeslagen.
                     </p>
 
-                    <Button
-                        size="lg"
-                        onClick={handleContinue}
-                        className="w-full text-lg h-14 shadow-lg active:scale-95 transition-all group"
-                    >
-                        Ga verder waar u gebleven was
-                        <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </Button>
+                    <div className="space-y-4">
+                        {/* Scoring Button */}
+                        <div className="relative group/scoring z-20">
+                            <div className={(!isChecking && isScoringSubmitted) ? 'cursor-not-allowed' : ''}>
+                                <Button
+                                    size="lg"
+                                    variant={isScoringSubmitted ? "outline" : "default"}
+                                    onClick={handleContinue}
+                                    disabled={isChecking || isScoringSubmitted}
+                                    className={`w-full text-base sm:text-lg h-auto py-4 transition-all group 
+                                        ${isScoringSubmitted
+                                            ? 'opacity-50 pointer-events-none bg-muted shadow-sm'
+                                            : 'shadow-lg active:scale-95'}`}
+                                >
+                                    {isChecking ? "Controleren..." : (isScoringSubmitted ? "Scoring" : "Scoring: Ga verder waar u gebleven was")}
+                                    {!isChecking && !isScoringSubmitted && <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform flex-shrink-0" />}
+                                </Button>
+                            </div>
+                            {!isChecking && isScoringSubmitted && (
+                                <div className="absolute left-1/2 -translate-x-1/2 top-full mt-3 w-full opacity-0 invisible group-hover/scoring:opacity-100 group-hover/scoring:visible transition-all duration-200 z-10 pointer-events-none">
+                                    <div className="bg-amber-50 text-amber-900 border border-amber-200 text-sm shadow-xl rounded-lg p-3 text-center font-medium relative">
+                                        U heeft het scoring gedeelte al afgerond.
+                                        {/* CSS Triangle pointing UP */}
+                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-b-amber-200"></div>
+                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-b-amber-50 translate-y-[1px]"></div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Turing Button */}
+                        <div className="relative group/turing z-10">
+                            <div className={(!isChecking && !isScoringSubmitted) ? 'cursor-not-allowed' : ''}>
+                                <Button
+                                    size="lg"
+                                    variant={isScoringSubmitted ? "default" : "outline"}
+                                    onClick={() => navigate("/turing-test")}
+                                    disabled={isChecking || !isScoringSubmitted}
+                                    className={`w-full text-base sm:text-lg h-auto py-4 transition-all group 
+                                        ${(!isChecking && !isScoringSubmitted)
+                                            ? 'opacity-50 pointer-events-none bg-muted shadow-sm'
+                                            : 'shadow-lg active:scale-95'}`}
+                                >
+                                    {isChecking ? "Controleren..." : (isScoringSubmitted ? "Turing test" : "Ga naar Turing test")}
+                                    {!isChecking && isScoringSubmitted && <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform flex-shrink-0" />}
+                                </Button>
+                            </div>
+                            {!isChecking && !isScoringSubmitted && (
+                                <div className="absolute left-1/2 -translate-x-1/2 top-full mt-3 w-full opacity-0 invisible group-hover/turing:opacity-100 group-hover/turing:visible transition-all duration-200 z-10 pointer-events-none">
+                                    <div className="bg-amber-50 text-amber-900 border border-amber-200 text-sm shadow-xl rounded-lg p-3 text-center font-medium relative">
+                                        Rond eerst het scoring gedeelte af om met de Turing test te starten.
+                                        {/* CSS Triangle pointing UP */}
+                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-b-amber-200"></div>
+                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-b-amber-50 translate-y-[1px]"></div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </main>
             <Footer />

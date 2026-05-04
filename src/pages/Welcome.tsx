@@ -49,9 +49,12 @@ const Welcome = () => {
                             Klik op de onderstaande knop om de vragenlijst te starten.
                         </p>
                     </CardContent>
-                    <CardFooter className="flex justify-center">
+                    <CardFooter className="flex justify-center gap-4 flex-wrap">
                         <Button size="lg" onClick={() => navigate("/questionnaire")} className="min-w-[200px]">
                             Start de vragenlijst
+                        </Button>
+                        <Button size="lg" variant="outline" onClick={() => navigate("/turing-test")} className="min-w-[200px]">
+                            Turing test
                         </Button>
                     </CardFooter>
                 </Card>

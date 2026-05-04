@@ -10,6 +10,7 @@ import WelcomeBack from "./pages/WelcomeBack";
 import Questionnaire from "./pages/Questionnaire";
 import ThankYou from "./pages/ThankYou";
 import NotFound from "./pages/NotFound";
+import TuringQuestionnaire from "./pages/TuringQuestionnaire";
 
 import RequireSession from "@/components/auth/RequireSession";
 
@@ -56,6 +57,14 @@ const App = () => (
             element={
               <RequireSession>
                 <ThankYou />
+              </RequireSession>
+            }
+          />
+          <Route
+            path="/turing-test"
+            element={
+              <RequireSession>
+                <TuringQuestionnaire />
               </RequireSession>
             }
           />
