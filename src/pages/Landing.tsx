@@ -10,7 +10,7 @@ const Landing = () => {
     <div className="min-h-screen flex flex-col bg-[#f8fafc]">
       {/* Main content */}
       <main className="flex-1 flex items-center justify-center p-6 sm:p-12">
-        <div className="max-w-6xl w-full mx-auto space-y-16 py-8">
+        <div className="max-w-5xl w-full mx-auto space-y-16 py-8">
           {/* Hero Section */}
           <div className="text-center space-y-8">
             <h1 className="text-3xl sm:text-5xl font-bold text-[#0f172a] leading-tight">
@@ -25,7 +25,7 @@ const Landing = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             {/* Left side: Context & Phasing */}
-            <div className="lg:col-span-7 space-y-10">
+            <div className="lg:col-span-8 space-y-10">
               <div className="bg-white rounded-3xl border border-[#e2e8f0] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-10 space-y-8 relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-2 h-full bg-primary/20"></div>
 
@@ -101,7 +101,7 @@ const Landing = () => {
             </div>
 
             {/* Right side: Practical Info & CTA */}
-            <div className="lg:col-span-5 space-y-6">
+            <div className="lg:col-span-4 space-y-8">
               <div className="bg-white rounded-3xl border border-[#e2e8f0] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 space-y-6">
                 <div className="flex items-center gap-4 mb-2">
                   <div className="p-3 bg-[#f0f9ff] rounded-2xl">
@@ -141,7 +141,7 @@ const Landing = () => {
         </div>
       </main>
 
-      <Footer containerClass="max-w-6xl w-full mx-auto px-6 sm:px-12" />
+      <Footer containerClass="max-w-5xl w-full mx-auto px-6 sm:px-12" />
     </div>
   );
 };

@@ -530,26 +530,30 @@ export async function saveSurveyProgress(
     const parts = key.split('.');
     const step = parts[0];
 
-    // The Turing test strictly only cares about segmentation answers. 
-    // Ignore any stray profile or feedback answers left in local storage.
-    if (step === 'profile' || step === 'feedback') {
+    // Ignore stray profile answers — those are not part of the Turing test.
+    // Feedback answers (step === 'feedback') ARE intentionally saved.
+    if (step === 'profile') {
       continue;
     }
 
     let caseId: string | null = null;
     let itemId: string;
 
-    if (parts.length === 3) {
+    // Feedback and profile-style answers use a 2-part key (step.questionId).
+    // Map these to '__profile__' so they share the same DB pattern as profile rows.
+    const isFlatKey = step === 'feedback' || parts.length === 2;
+
+    if (!isFlatKey && parts.length === 3) {
       caseId = parts[1];
       itemId = parts[2];
     } else {
-      caseId = null;
+      caseId = '__profile__';
       itemId = parts[1];
     }
 
     // Completely ignore any old answers from before we separated the Turing test
     // This cleans up old test data remaining in the browser
-    if (caseId && !caseId.endsWith('_turing') && caseId !== '__profile__') {
+    if (caseId !== '__profile__' && !caseId.endsWith('_turing')) {
       continue;
     }
 
@@ -557,7 +561,7 @@ export async function saveSurveyProgress(
       session_id: sessionId,
       participant_id: participantId,
       group_code: step,
-      case_id: caseId ?? "__none__", // Ensure non-null for composite key if needed
+      case_id: caseId,
       question_code: itemId,
       answer: answerObj.value,
       comment: answerObj.comment || null,
